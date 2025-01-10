@@ -1,5 +1,6 @@
 # %% imports
 import tkinter as tk
+from tkinter import ttk
 import customtkinter as ctk
 
 # Configurar la apariencia
@@ -29,6 +30,7 @@ class App(ctk.CTk):
         self.geometry(f"{width}x{height}+{x}+{y}")
         
     def create_menu(self):
+        # create menu
         menu_bar = tk.Menu(self)
     
         # file
@@ -46,7 +48,7 @@ class App(ctk.CTk):
         edit_menu.add_command(label="Undo", accelerator="Ctrl+Z")
         edit_menu.add_command(label="Redo", accelerator="Ctrl+Y")
         edit_menu.add_separator()
-        edit_menu.add_command(label="Toggle Treview", accelerator="X")
+        edit_menu.add_command(label="Toggle Treeview", accelerator="X")
     
         # view
         view_menu = tk.Menu(menu_bar, tearoff=0)
@@ -63,12 +65,46 @@ class App(ctk.CTk):
         help_menu.add_command(label="Documentation", accelerator="Ctrl+H")
         help_menu.add_command(label="About", accelerator="F1")
     
-        # Set in window
+        # set in window
         self.config(menu=menu_bar)
 
-#%% Content
     def create_widgets(self):
-        print("")
+        # create principal_frame
+        principal_frame = tk.PanedWindow(self, orient=tk.HORIZONTAL)
+        principal_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Ffile Explorer
+        treeview = ttk.Treeview(principal_frame)
+        treeview.heading("#0", text="File Explorer", anchor="w")
+        root_node = treeview.insert("", "end", text="Project", open=True)
+        treeview.insert(root_node, "end", text="file1.json")
+        treeview.insert(root_node, "end", text="file2.json")
+        
+        principal_frame.add(treeview, minsize=200)
+        
+        # tables
+        right_paned = tk.PanedWindow(principal_frame, orient=tk.VERTICAL)
+        
+        # top Table
+        top_table = ttk.Treeview(right_paned, columns=("Column 1", "Column 2"), show="headings")
+        top_table.heading("Column 1", text="Column 1")
+        top_table.heading("Column 2", text="Column 2")
+        top_table.insert("", "end", values=("Row 1", "Value 1"))
+        top_table.insert("", "end", values=("Row 2", "Value 2"))
+        right_paned.add(top_table, minsize=200)
+        
+        # bottom Table
+        bottom_table = ttk.Treeview(right_paned, columns=("Column A", "Column B"), show="headings")
+        bottom_table.heading("Column A", text="Column A")
+        bottom_table.heading("Column B", text="Column B")
+        bottom_table.insert("", "end", values=("Item 1", "Data A"))
+        bottom_table.insert("", "end", values=("Item 2", "Data B"))
+        right_paned.add(bottom_table, minsize=200)
+        
+        # add right_paned to principal_frame
+        principal_frame.add(right_paned, minsize=200)
+
+
 # %% Execute
 if __name__ == "__main__":
     app = App()
