@@ -1,2 +1,31 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Python files treated as text
+*.py text
+
+# JSON files treated as text (if you're using JSON files for configuration or data)
+*.json text
+
+# Text files, such as configurations or any plain text files
+*.txt text
+*.md text
+
+# Image and binary files, like icons or images used by the app
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+
+# Icon files (if you use .ico or similar for your application)
+*.ico binary
+
+# Compressed or backup files (if you use any compressed formats)
+*.zip binary
+*.tar.gz binary
+
+# IDE or editor specific files (if you're using IDEs that create temporary files)
+.vscode/* binary
+.idea/* binary
+*.swp binary
+*.bak binary
