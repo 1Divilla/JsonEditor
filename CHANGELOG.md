@@ -1,12 +1,9 @@
 # Changelog
 
-## [0.2.0] - 2025-12-22
+## [0.2.0] - 2025-01-11
 ### Added
-- Support for saving and exporting .sav files after editing.
-- Added a "Save As" functionality.
-
-### Changed
-- Improved user interface with more options for easier navigation.
+- Added base structure
+- Added a "Close" functionality.
 
 ---
 
