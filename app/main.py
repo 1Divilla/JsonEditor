@@ -85,7 +85,7 @@ class App(ctk.CTk):
         treeview.pack(fill=tk.BOTH, expand=True)
         
         file_explorer_frame.pack(fill=tk.BOTH, expand=True)
-        principal_frame.add(file_explorer_frame, minsize=170)
+        principal_frame.add(file_explorer_frame, width=170, minsize=170)
         
         # tables
         right_paned = tk.PanedWindow(principal_frame, orient=tk.VERTICAL)
