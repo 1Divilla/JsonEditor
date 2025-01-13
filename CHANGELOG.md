@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1] - 2025-01-13
+### Added
+- Added shortcuts (currently without functionality).
+- Added functionality shortcut(Close: "Ctrl+Q").
+- Added functionality for reading files (JSON, text, and .sav formats).
+
+---
+
 ## [0.1.0] - 2025-01-10
 ### Added
 - Initial release of the SaveData Editor app.
