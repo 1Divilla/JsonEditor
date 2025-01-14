@@ -3,6 +3,7 @@
 ## [0.1.2] - 2025-01-14
 ### Added
 - Added functions to write and read config file
+- Added function to togglefullscreen
 
 ---
 

@@ -13,7 +13,6 @@ def open_file():
 
     if file_path:
         try:
-            # Abrir el archivo como JSON
             with open(file_path, 'r') as file:
                 data_json = json.load(file)
                 print("JSON file content:", json.dumps(data_json, indent=4))
@@ -24,4 +23,9 @@ def open_file():
             messagebox.showerror("Error", f"The file {file_path} is not a valid JSON file.")
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred while opening the file:\n\n{e}")
-
+            
+def switch_fullscreen(app):
+    is_fullscreen = app.attributes("-fullscreen")
+    app.attributes("-fullscreen", not is_fullscreen)
+    button_text = "Salir de Pantalla Completa" if not is_fullscreen else "Pantalla Completa"
+    app.toggle_button.config(text=button_text)

@@ -14,7 +14,7 @@ class App(ctk.CTk):
         self.title("JsonEditor")
         self.minsize(1040, 600)
         self.geometry("1040x600")
-        self.after(40, self.center_window(1040, 600))
+        self.center_window(1040, 600)
         
         self.create_menu()
         self.shortcuts()
@@ -39,7 +39,7 @@ class App(ctk.CTk):
         file_menu.add_command(label="Save", accelerator="Ctrl+S")
         file_menu.add_command(label="Save As", accelerator="Ctrl+Shift+S")
         file_menu.add_separator()
-        file_menu.add_command(label="Close", accelerator="Ctrl+Q")
+        file_menu.add_command(label="Close", accelerator="Ctrl+Q", command= lambda: self.destroy())
     
         # edit
         edit_menu = tk.Menu(menu_bar, tearoff=0)
@@ -56,7 +56,7 @@ class App(ctk.CTk):
         view_menu.add_command(label="Zoom Out", accelerator="Ctrl+-")
         view_menu.add_command(label="Reset Zoom", accelerator="Ctrl+0")
         view_menu.add_separator()
-        view_menu.add_command(label="Full Screen", accelerator="F11")
+        view_menu.add_command(label="Full Screen", accelerator="F11", command= lambda: st.switch_fullscreen(self))
         
         # help
         help_menu = tk.Menu(menu_bar, tearoff=0)
@@ -137,7 +137,7 @@ class App(ctk.CTk):
         self.bind("<Control-plus>", lambda event: print("Zoom in"))
         self.bind("<Control-minus>", lambda event: print("Zoom out"))
         self.bind("<Control-0>", lambda event: print("Reset zoom"))
-        self.bind("<F11>", lambda event: print("Toggle full screen"))
+        self.bind("<F11>", lambda event: st.switch_fullscreen(app))
         
         # Help shortcuts
         self.bind("<Control-h>", lambda event: print("Open documentation"))
