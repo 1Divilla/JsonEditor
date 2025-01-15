@@ -4,6 +4,7 @@ from tkinter import ttk
 import customtkinter as ctk
 # local
 import shortcuts as st
+import tools as tls
 
 # %% Code
 class App(ctk.CTk):
@@ -19,6 +20,7 @@ class App(ctk.CTk):
         self.create_menu()
         self.shortcuts()
         self.create_widgets()
+        
         
     def center_window(self, w, h):
         """Center the window on the screen."""
@@ -37,7 +39,7 @@ class App(ctk.CTk):
         menu_bar.add_cascade(label="File", menu=file_menu)
         file_menu.add_command(label="Open", accelerator="Ctrl+O", command= lambda: st.open_file())
         file_menu.add_command(label="Save", accelerator="Ctrl+S")
-        file_menu.add_command(label="Save As", accelerator="Ctrl+Shift+S")
+        file_menu.add_command(label="Save As", accelerator="Ctrl+Shift+S", command= lambda: st.save_as(app, "sadasd.json", ".txt"))
         file_menu.add_separator()
         file_menu.add_command(label="Close", accelerator="Ctrl+Q", command= lambda: self.destroy())
     
@@ -52,11 +54,11 @@ class App(ctk.CTk):
         # view
         view_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="View", menu=view_menu)
-        view_menu.add_command(label="Zoom In", accelerator="Ctrl++")
-        view_menu.add_command(label="Zoom Out", accelerator="Ctrl+-")
-        view_menu.add_command(label="Reset Zoom", accelerator="Ctrl+0")
+        view_menu.add_command(label="Zoom In", accelerator="Ctrl++", command= lambda: st.zoom_in())
+        view_menu.add_command(label="Zoom Out", accelerator="Ctrl+-", command= lambda: st.zoom_out())
+        view_menu.add_command(label="Reset View", accelerator="Ctrl+0", command= lambda: st.reset_view())
         view_menu.add_separator()
-        view_menu.add_command(label="Full Screen", accelerator="F11", command= lambda: st.switch_fullscreen(self))
+        view_menu.add_command(label="Full Screen", accelerator="F11", command= lambda: st.toggle_fullscreen(self))
         
         # help
         help_menu = tk.Menu(menu_bar, tearoff=0)
@@ -112,6 +114,7 @@ class App(ctk.CTk):
         
         # add right_paned to principal_frame
         principal_frame.add(right_paned, minsize=150)
+        principal_frame.bind(("<Configure>", tls.write_config_file("principal_frame", 1)))
         
     
     def shortcuts(self):
@@ -120,8 +123,8 @@ class App(ctk.CTk):
         self.bind("<Control-O>", lambda event: st.open_file())
         self.bind("<Control-s>", lambda event: print("Save file m"))
         self.bind("<Control-S>", lambda event: print("Save file M"))
-        self.bind("<Control-Shift-s>", lambda event: print("Save file as"))
-        self.bind("<Control-Shift-S>", lambda event: print("Save file as"))
+        self.bind("<Control-Shift-s>", lambda event: st.save_as(app, "sadasd.json", "asdasd"))
+        self.bind("<Control-Shift-S>", lambda event: st.save_as(app, "sadasd.json", "asdasd"))
         self.bind("<Control-q>", lambda event: self.destroy())
         self.bind("<Control-Q>", lambda event: self.destroy())
         
@@ -134,10 +137,10 @@ class App(ctk.CTk):
         self.bind("<Alt-T>", lambda event: print("Toggle Treeview"))
         
         # View shortcuts
-        self.bind("<Control-plus>", lambda event: print("Zoom in"))
-        self.bind("<Control-minus>", lambda event: print("Zoom out"))
-        self.bind("<Control-0>", lambda event: print("Reset zoom"))
-        self.bind("<F11>", lambda event: st.switch_fullscreen(app))
+        self.bind("<Control-plus>", lambda event: st.zoom_in())
+        self.bind("<Control-minus>", lambda event: st.zoom_out())
+        self.bind("<Control-0>", lambda event: st.reset_view())
+        self.bind("<F11>", lambda event: st.toggle_fullscreen(app))
         
         # Help shortcuts
         self.bind("<Control-h>", lambda event: print("Open documentation"))
