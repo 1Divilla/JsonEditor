@@ -1,11 +1,12 @@
 # %% imports
 from tkinter import filedialog, messagebox
 import json
+import os
 # local
 import tools as tls
 
 # %% Code
-def open_file():
+def open_file(treeview):
     file_path = filedialog.askopenfilename(
         title="Select File",
         filetypes=(("JSON Files", "*.json"), ("All Files", "*.*"))
@@ -15,8 +16,25 @@ def open_file():
         try:
             with open(file_path, 'r') as file:
                 data_json = json.load(file)
-                print("JSON file content:", json.dumps(data_json, indent=4))
-                return data_json
+
+                treeview.heading("#0", text=os.path.basename(file_path), anchor="w")
+
+                for item in treeview.get_children():
+                    treeview.delete(item)
+
+                def insert_items(parent, d):
+                    if isinstance(d, dict):
+                        for key, value in d.items():
+                            node = treeview.insert(parent, "end", text=key, values=(str(value) if not isinstance(value, (dict, list)) else ""))
+                            if isinstance(value, (dict, list)):
+                                insert_items(node, value)
+                    elif isinstance(d, list):
+                        for index, item in enumerate(d):
+                            node = treeview.insert(parent, "end", text=f"[{index}]", values=(str(item) if not isinstance(item, (dict, list)) else ""))
+                            if isinstance(item, (dict, list)):
+                                insert_items(node, item)
+
+                insert_items("", data_json)
         except FileNotFoundError:
             messagebox.showerror("Error", f"The file {file_path} was not found.")
         except json.JSONDecodeError:
@@ -24,6 +42,8 @@ def open_file():
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred while opening the file:\n\n{e}")
             
+
+
 def toggle_fullscreen(app):
     is_fullscreen = app.attributes("-fullscreen")
     app.attributes("-fullscreen", not is_fullscreen)
@@ -38,7 +58,7 @@ def reset_view():
     if tls.read_config_file("font_size")!=12:
         tls.write_config_file("font_size", 12)
 
-def save_as(app, name, content):
+def save_as(name, content):
     try:
         type_file = f".{name.split('.')[-1]}" if '.' in name else ".json"
         

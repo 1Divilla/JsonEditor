@@ -27,7 +27,7 @@ def read_config_file(variable):
     except Exception as e:
         print(f"Unexpected error: {e}")
         return None
-    
+
 def write_config_file(variable, value):
     project_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
     config_file_path = os.path.join(project_dir, 'config.json')

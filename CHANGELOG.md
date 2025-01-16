@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4] - 2025-01-16
+### Added
+- Added methods to store user-defined proportions of the panels.
+- Implemented `Open File` functionality to load and display JSON file contents in the Treeview.
+
+---
+
 ## [0.1.3] - 2025-01-15
 ### Added
 - Updated the `Reset Zoom` function:

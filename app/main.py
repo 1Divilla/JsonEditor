@@ -37,9 +37,9 @@ class App(ctk.CTk):
         # file
         file_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="File", menu=file_menu)
-        file_menu.add_command(label="Open", accelerator="Ctrl+O", command= lambda: st.open_file())
+        file_menu.add_command(label="Open", accelerator="Ctrl+O", command= lambda: st.open_file(self.treeview))
         file_menu.add_command(label="Save", accelerator="Ctrl+S")
-        file_menu.add_command(label="Save As", accelerator="Ctrl+Shift+S", command= lambda: st.save_as(app, "sadasd.json", ".txt"))
+        file_menu.add_command(label="Save As", accelerator="Ctrl+Shift+S", command= lambda: st.save_as("sadasd.json", ".txt"))
         file_menu.add_separator()
         file_menu.add_command(label="Close", accelerator="Ctrl+Q", command= lambda: self.destroy())
     
@@ -70,7 +70,13 @@ class App(ctk.CTk):
         self.config(menu=menu_bar)
 
     def create_widgets(self):
-        # create principal_frame
+        def on_principal_resize(event):
+            tls.write_config_file("principal_frame", principal_frame.sash_coord(0)[0])
+            
+        def on_right_paned_resize(event):
+            tls.write_config_file("top_table", top_table.winfo_height())
+            
+        # Create principal_frame
         principal_frame = tk.PanedWindow(self, orient=tk.HORIZONTAL)
         principal_frame.pack(fill=tk.BOTH, expand=True)
         
@@ -79,15 +85,15 @@ class App(ctk.CTk):
         file_explorer_entry = tk.Entry(file_explorer_frame)
         file_explorer_entry.pack(fill=tk.X, pady=(2, 4))
         
-        treeview = ttk.Treeview(file_explorer_frame)
-        treeview.heading("#0", text="File Explorer", anchor="w")
-        root_node = treeview.insert("", "end", text="Project", open=True)
-        treeview.insert(root_node, "end", text="file1.json")
-        treeview.insert(root_node, "end", text="file2.json")
-        treeview.pack(fill=tk.BOTH, expand=True)
+        self.treeview = ttk.Treeview(file_explorer_frame)
+        # self.treeview.heading("#0", text="File Explorer", anchor="w")
+        # root_node = self.treeview.insert("", "end", text="Project", open=True)
+        # self.treeview.insert(root_node, "end", text="file1.json")
+        # self.treeview.insert(root_node, "end", text="file2.json")
+        self.treeview.pack(fill=tk.BOTH, expand=True)
         
         file_explorer_frame.pack(fill=tk.BOTH, expand=True)
-        principal_frame.add(file_explorer_frame, width=170, minsize=170)
+        principal_frame.add(file_explorer_frame, width=tls.read_config_file("principal_frame"), minsize=170)
         
         # tables
         right_paned = tk.PanedWindow(principal_frame, orient=tk.VERTICAL)
@@ -100,7 +106,7 @@ class App(ctk.CTk):
         top_table.column("Column 2", width=150, stretch=False)
         top_table.insert("", "end", values=("Row 1", "Value 1"))
         top_table.insert("", "end", values=("Row 2", "Value 2"))
-        right_paned.add(top_table, height=400, minsize=150)
+        right_paned.add(top_table, height=tls.read_config_file("top_table"), minsize=150)
         
         # bottom Table
         bottom_table = ttk.Treeview(right_paned, columns=("Column A", "Column B"), show="headings")
@@ -114,17 +120,19 @@ class App(ctk.CTk):
         
         # add right_paned to principal_frame
         principal_frame.add(right_paned, minsize=150)
-        principal_frame.bind(("<Configure>", tls.write_config_file("principal_frame", 1)))
-        
     
+        # Vincular el evento <Configure> al método on_resize
+        principal_frame.bind("<B1-Motion>", on_principal_resize)
+        right_paned.bind("<B1-Motion>", on_right_paned_resize)
+        
     def shortcuts(self):
         # File shortcuts
-        self.bind("<Control-o>", lambda event: st.open_file())
-        self.bind("<Control-O>", lambda event: st.open_file())
+        self.bind("<Control-o>", lambda event: st.open_file(self.treeview))
+        self.bind("<Control-O>", lambda event: st.open_file(self.treeview))
         self.bind("<Control-s>", lambda event: print("Save file m"))
         self.bind("<Control-S>", lambda event: print("Save file M"))
-        self.bind("<Control-Shift-s>", lambda event: st.save_as(app, "sadasd.json", "asdasd"))
-        self.bind("<Control-Shift-S>", lambda event: st.save_as(app, "sadasd.json", "asdasd"))
+        self.bind("<Control-Shift-s>", lambda event: st.save_as("sadasd.json", "asdasd"))
+        self.bind("<Control-Shift-S>", lambda event: st.save_as("sadasd.json", "asdasd"))
         self.bind("<Control-q>", lambda event: self.destroy())
         self.bind("<Control-Q>", lambda event: self.destroy())
         
