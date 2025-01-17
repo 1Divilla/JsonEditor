@@ -86,10 +86,6 @@ class App(ctk.CTk):
         file_explorer_entry.pack(fill=tk.X, pady=(2, 4))
         
         self.treeview = ttk.Treeview(file_explorer_frame)
-        # self.treeview.heading("#0", text="File Explorer", anchor="w")
-        # root_node = self.treeview.insert("", "end", text="Project", open=True)
-        # self.treeview.insert(root_node, "end", text="file1.json")
-        # self.treeview.insert(root_node, "end", text="file2.json")
         self.treeview.pack(fill=tk.BOTH, expand=True)
         
         file_explorer_frame.pack(fill=tk.BOTH, expand=True)
