@@ -49,14 +49,14 @@ class App(ctk.CTk):
         edit_menu.add_command(label="Undo", accelerator="Ctrl+Z")
         edit_menu.add_command(label="Redo", accelerator="Ctrl+Y")
         edit_menu.add_separator()
-        edit_menu.add_command(label="Toggle Treeview", accelerator="Alt+T")
+        edit_menu.add_command(label="Toggle Table", accelerator="Alt+T", command= lambda: st.toggle_treeview())
     
         # view
         view_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="View", menu=view_menu)
         view_menu.add_command(label="Zoom In", accelerator="Ctrl++", command= lambda: st.zoom_in())
         view_menu.add_command(label="Zoom Out", accelerator="Ctrl+-", command= lambda: st.zoom_out())
-        view_menu.add_command(label="Reset View", accelerator="Ctrl+0", command= lambda: st.reset_view())
+        view_menu.add_command(label="Reset View", accelerator="Ctrl+0", command= lambda: st.reset_view(app))
         view_menu.add_separator()
         view_menu.add_command(label="Full Screen", accelerator="F11", command= lambda: st.toggle_fullscreen(self))
         
@@ -71,55 +71,55 @@ class App(ctk.CTk):
 
     def create_widgets(self):
         def on_principal_resize(event):
-            tls.write_config_file("principal_frame", principal_frame.sash_coord(0)[0])
+            tls.write_config_file("principal_frame", self.principal_frame.sash_coord(0)[0])
             
         def on_right_paned_resize(event):
-            tls.write_config_file("top_table", top_table.winfo_height())
+            tls.write_config_file("top_table", self.top_table.winfo_height())
             
         # Create principal_frame
-        principal_frame = tk.PanedWindow(self, orient=tk.HORIZONTAL)
-        principal_frame.pack(fill=tk.BOTH, expand=True)
+        self.principal_frame = tk.PanedWindow(self, orient=tk.HORIZONTAL)
+        self.principal_frame.pack(fill=tk.BOTH, expand=True)
         
         # File Explorer with Entry
-        file_explorer_frame = tk.Frame(principal_frame)
-        file_explorer_entry = tk.Entry(file_explorer_frame)
-        file_explorer_entry.pack(fill=tk.X, pady=(2, 4))
+        self.file_explorer_frame = tk.Frame(self.principal_frame)
+        self.file_explorer_entry = tk.Entry(self.file_explorer_frame)
+        self.file_explorer_entry.pack(fill=tk.X, pady=(2, 4))
         
-        self.treeview = ttk.Treeview(file_explorer_frame)
+        self.treeview = ttk.Treeview(self.file_explorer_frame)
         self.treeview.pack(fill=tk.BOTH, expand=True)
         
-        file_explorer_frame.pack(fill=tk.BOTH, expand=True)
-        principal_frame.add(file_explorer_frame, width=tls.read_config_file("principal_frame"), minsize=170)
+        self.file_explorer_frame.pack(fill=tk.BOTH, expand=True)
+        self.principal_frame.add(self.file_explorer_frame, width=tls.read_config_file("principal_frame"), minsize=170)
         
         # tables
-        right_paned = tk.PanedWindow(principal_frame, orient=tk.VERTICAL)
+        self.right_paned = tk.PanedWindow(self.principal_frame, orient=tk.VERTICAL)
         
         # top Table
-        top_table = ttk.Treeview(right_paned, columns=("Column 1", "Column 2"), show="headings")
-        top_table.heading("Column 1", text="Column 1")
-        top_table.heading("Column 2", text="Column 2")
-        top_table.column("Column 1", width=100, stretch=False)
-        top_table.column("Column 2", width=150, stretch=False)
-        top_table.insert("", "end", values=("Row 1", "Value 1"))
-        top_table.insert("", "end", values=("Row 2", "Value 2"))
-        right_paned.add(top_table, height=tls.read_config_file("top_table"), minsize=150)
+        self.top_table = ttk.Treeview(self.right_paned, columns=("Column 1", "Column 2"), show="headings")
+        self.top_table.heading("Column 1", text="Column 1")
+        self.top_table.heading("Column 2", text="Column 2")
+        self.top_table.column("Column 1", width=100, stretch=False)
+        self.top_table.column("Column 2", width=150, stretch=False)
+        self.top_table.insert("", "end", values=("Row 1", "Value 1"))
+        self.top_table.insert("", "end", values=("Row 2", "Value 2"))
+        self.right_paned.add(self.top_table, height=tls.read_config_file("top_table"), minsize=150)
         
         # bottom Table
-        bottom_table = ttk.Treeview(right_paned, columns=("Column A", "Column B"), show="headings")
-        bottom_table.heading("Column A", text="Column A")
-        bottom_table.heading("Column B", text="Column B")
-        bottom_table.column("Column A", width=120, stretch=False)
-        bottom_table.column("Column B", width=180, stretch=False)
-        bottom_table.insert("", "end", values=("Item 1", "Data A"))
-        bottom_table.insert("", "end", values=("Item 2", "Data B"))
-        right_paned.add(bottom_table, minsize=150)
+        self.bottom_table = ttk.Treeview(self.right_paned, columns=("Column A", "Column B"), show="headings")
+        self.bottom_table.heading("Column A", text="Column A")
+        self.bottom_table.heading("Column B", text="Column B")
+        self.bottom_table.column("Column A", width=120, stretch=False)
+        self.bottom_table.column("Column B", width=180, stretch=False)
+        self.bottom_table.insert("", "end", values=("Item 1", "Data A"))
+        self.bottom_table.insert("", "end", values=("Item 2", "Data B"))
+        self.right_paned.add(self.bottom_table, minsize=150)
         
         # add right_paned to principal_frame
-        principal_frame.add(right_paned, minsize=150)
+        self.principal_frame.add(self.right_paned, minsize=150)
     
         # Vincular el evento <Configure> al método on_resize
-        principal_frame.bind("<B1-Motion>", on_principal_resize)
-        right_paned.bind("<B1-Motion>", on_right_paned_resize)
+        self.principal_frame.bind("<B1-Motion>", on_principal_resize)
+        self.right_paned.bind("<B1-Motion>", on_right_paned_resize)
         
     def shortcuts(self):
         # File shortcuts
@@ -137,49 +137,19 @@ class App(ctk.CTk):
         self.bind("<Control-Z>", lambda event: print("Undo action"))
         self.bind("<Control-y>", lambda event: print("Redo action"))
         self.bind("<Control-Y>", lambda event: print("Redo action"))
-        self.bind("<Alt-t>", lambda event: print("Toggle Treeview"))
-        self.bind("<Alt-T>", lambda event: print("Toggle Treeview"))
+        self.bind("<Alt-t>", lambda event: st.toggle_treeview())
+        self.bind("<Alt-T>", lambda event:  st.toggle_treeview())
         
         # View shortcuts
         self.bind("<Control-plus>", lambda event: st.zoom_in())
         self.bind("<Control-minus>", lambda event: st.zoom_out())
-        self.bind("<Control-0>", lambda event: st.reset_view())
+        self.bind("<Control-0>", lambda event: st.reset_view(app))
         self.bind("<F11>", lambda event: st.toggle_fullscreen(app))
         
         # Help shortcuts
         self.bind("<Control-h>", lambda event: print("Open documentation"))
         self.bind("<Control-H>", lambda event: print("Open documentation"))
         self.bind("<F1>", lambda event: print("About application"))
-        
-        # Window info
-        self.bind("<Control-i>", lambda event: self.window_info())
-        self.bind("<Control-I>", lambda event: self.window_info())
-        
-    def window_info(self):
-        # Tamaño de la ventana
-        width = self.winfo_width()
-        height = self.winfo_height()
-    
-        # Posición de la ventana
-        x = self.winfo_x()
-        y = self.winfo_y()
-    
-        # Estado de la ventana
-        state = self.state()  # 'normal', 'iconic', 'withdrawn'
-    
-        # Información de la geometría
-        geometry = self.geometry()
-    
-        # Información de pantalla completa
-        fullscreen = "Yes" if self.attributes("-fullscreen") else "No"
-        
-        # Imprimir la información
-        print(f"Información de la ventana:")
-        print(f"  Tamaño: {width}x{height}")
-        print(f"  Posición: ({x}, {y})")
-        print(f"  Estado: {state}")
-        print(f"  Geometría: {geometry}")
-        print(f"  Pantalla completa: {fullscreen}")
 
 # %% Execute
 if __name__ == "__main__":

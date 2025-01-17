@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.5] - 2025-01-17
+### Added
+- Implemented `Reset View` functionality.
+- Renamed `Toggle Treeview` to `Toggle Table` for better clarity.
+- Implemented `Toggle Table` functionality (non-visual).
+
+---
+
 ## [0.1.4] - 2025-01-16
 ### Added
 - Added methods to store user-defined proportions of the panels.

@@ -27,7 +27,11 @@ def read_config_file(variable):
     except Exception as e:
         print(f"Unexpected error: {e}")
         return None
-
+def show_content_file(path, current_table, top_table, bottom_table):
+    if current_table == 1:
+        print("top_table")
+    elif current_table == 2:
+        print("bottom_table")
 def write_config_file(variable, value):
     project_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
     config_file_path = os.path.join(project_dir, 'config.json')

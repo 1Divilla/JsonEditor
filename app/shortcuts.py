@@ -50,13 +50,19 @@ def toggle_fullscreen(app):
     button_text = "Salir de Pantalla Completa" if not is_fullscreen else "Pantalla Completa"
     app.toggle_button.config(text=button_text)
     
-def reset_view():
-    if tls.read_config_file("principal_frame")!=170:
+def reset_view(app):
+    if tls.read_config_file("principal_frame") != 170:
         tls.write_config_file("principal_frame", 170)
-    if tls.read_config_file("top_table")!=400:
+        app.principal_frame.paneconfig(app.file_explorer_frame, width=170)
+
+    if tls.read_config_file("top_table") != 400:
         tls.write_config_file("top_table", 400)
-    if tls.read_config_file("font_size")!=12:
+        app.right_paned.paneconfig(app.top_table, height=400)
+
+    if tls.read_config_file("font_size") != 12:
         tls.write_config_file("font_size", 12)
+
+    app.update_idletasks()
 
 def save_as(name, content):
     try:
@@ -78,8 +84,13 @@ def save_as(name, content):
 
     except Exception as e:
         messagebox.showerror("Save As JSON Error", f"An error occurred while saving:\n{e}")
-
-            
+        
+def toggle_treeview():
+    if tls.read_config_file("current_table") == "top":
+        tls.write_config_file("current_table", "bottom")
+    
+    elif tls.read_config_file("current_table") == "bottom":
+        tls.write_config_file("current_table", "top")
         
 def zoom_in():
     if tls.read_config_file("font_size")<32:
