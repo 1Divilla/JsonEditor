@@ -16,53 +16,42 @@ def open_file(treeview):
         try:
             with open(file_path, 'r') as file:
                 data_json = json.load(file)
+                
+                # Save data in config.json
+                tls.write_config_file("path", file_path)
+                tls.write_config_file("data_file", data_json)
 
-                treeview.heading("#0", text=os.path.basename(file_path), anchor="w")
+                # Actualizar el encabezado y limpiar el treeview
+                tls.update_treeview(treeview, file_path, data_json)
 
-                for item in treeview.get_children():
-                    treeview.delete(item)
-
-                def insert_items(parent, d):
-                    if isinstance(d, dict):
-                        for key, value in d.items():
-                            node = treeview.insert(parent, "end", text=key, values=(str(value) if not isinstance(value, (dict, list)) else ""))
-                            if isinstance(value, (dict, list)):
-                                insert_items(node, value)
-                    elif isinstance(d, list):
-                        for index, item in enumerate(d):
-                            node = treeview.insert(parent, "end", text=f"[{index}]", values=(str(item) if not isinstance(item, (dict, list)) else ""))
-                            if isinstance(item, (dict, list)):
-                                insert_items(node, item)
-
-                insert_items("", data_json)
         except FileNotFoundError:
             messagebox.showerror("Error", f"The file {file_path} was not found.")
         except json.JSONDecodeError:
             messagebox.showerror("Error", f"The file {file_path} is not a valid JSON file.")
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred while opening the file:\n\n{e}")
+    else:
+        messagebox.showerror("Error", "No file selected. Please select a valid JSON file.")
             
-
-
-def toggle_fullscreen(app):
-    is_fullscreen = app.attributes("-fullscreen")
-    app.attributes("-fullscreen", not is_fullscreen)
+def toggle_fullscreen(self):
+    is_fullscreen = self.attributes("-fullscreen")
+    self.attributes("-fullscreen", not is_fullscreen)
     button_text = "Salir de Pantalla Completa" if not is_fullscreen else "Pantalla Completa"
-    app.toggle_button.config(text=button_text)
+    self.toggle_button.config(text=button_text)
     
-def reset_view(app):
+def reset_view(self):
     if tls.read_config_file("principal_frame") != 170:
         tls.write_config_file("principal_frame", 170)
-        app.principal_frame.paneconfig(app.file_explorer_frame, width=170)
+        self.principal_frame.paneconfig(self.file_explorer_frame, width=170)
 
     if tls.read_config_file("top_table") != 400:
         tls.write_config_file("top_table", 400)
-        app.right_paned.paneconfig(app.top_table, height=400)
+        self.right_paned.paneconfig(self.top_table, height=400)
 
     if tls.read_config_file("font_size") != 12:
         tls.write_config_file("font_size", 12)
 
-    app.update_idletasks()
+    self.update_idletasks()
 
 def save_as(name, content):
     try:
@@ -91,7 +80,7 @@ def toggle_treeview():
     
     elif tls.read_config_file("current_table") == "bottom":
         tls.write_config_file("current_table", "top")
-        
+                
 def zoom_in():
     if tls.read_config_file("font_size")<32:
         tls.write_config_file("font_size", tls.read_config_file("font_size")+1)

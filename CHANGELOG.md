@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.6] - 2025-01-28
+### Added
+- Added functionality to `show_content_file` to display information in the `current_table`.
+- Added `data_file` field to `config.json`.
+- Renamed `shortcuts` to `binds` for better clarity.
+- Renamed variable `app` to `self` for better clarity and consistency.
+- Moved `on_right_paned_resize` and `on_principal_resize` to `tools.py`.
+
+### Fixed
+- Added handlers for `<<TreeviewOpen>>` and `<<TreeviewClose>>` events to prevent selection during node expansion or collapse.
+- The `<<TreeviewSelect>>` event now only triggers `show_content_file` when a node is actually selected, not during expansion or collapse.
+
+### Refactored
+- Refactored `open_file` to use `update_treeview` and `insert_items` functions from `tools.py` for better code organization and separation of concerns.
+
 ## [0.1.5] - 2025-01-17
 ### Added
 - Implemented `Reset View` functionality.

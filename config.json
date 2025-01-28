@@ -1,7 +1,9 @@
 {
     "current_table": "top",
-    "principal_frame": 171,
-    "top_table": 400,
+    "principal_frame": 170,
+    "top_table": 593,
     "font_size": 12,
-    "theme": "light"
+    "theme": "light",
+    "path": "",
+    "data_file": {}
 }

@@ -1,8 +1,8 @@
-# %% imports
+# %% Imports
 import tkinter as tk
 from tkinter import ttk
 import customtkinter as ctk
-# local
+# Local
 import shortcuts as st
 import tools as tls
 
@@ -17,10 +17,11 @@ class App(ctk.CTk):
         self.geometry("1040x600")
         self.center_window(1040, 600)
         
-        self.create_menu()
-        self.shortcuts()
         self.create_widgets()
+        self.create_menu()
+        self.binds()
         
+        st.update_treeview(self.treeview, tls.read_config_file("path"), tls.read_config_file("data_file"))
         
     def center_window(self, w, h):
         """Center the window on the screen."""
@@ -56,7 +57,7 @@ class App(ctk.CTk):
         menu_bar.add_cascade(label="View", menu=view_menu)
         view_menu.add_command(label="Zoom In", accelerator="Ctrl++", command= lambda: st.zoom_in())
         view_menu.add_command(label="Zoom Out", accelerator="Ctrl+-", command= lambda: st.zoom_out())
-        view_menu.add_command(label="Reset View", accelerator="Ctrl+0", command= lambda: st.reset_view(app))
+        view_menu.add_command(label="Reset View", accelerator="Ctrl+0", command= lambda: st.reset_view(self))
         view_menu.add_separator()
         view_menu.add_command(label="Full Screen", accelerator="F11", command= lambda: st.toggle_fullscreen(self))
         
@@ -68,14 +69,9 @@ class App(ctk.CTk):
     
         # set in window
         self.config(menu=menu_bar)
-
+        
     def create_widgets(self):
-        def on_principal_resize(event):
-            tls.write_config_file("principal_frame", self.principal_frame.sash_coord(0)[0])
-            
-        def on_right_paned_resize(event):
-            tls.write_config_file("top_table", self.top_table.winfo_height())
-            
+        
         # Create principal_frame
         self.principal_frame = tk.PanedWindow(self, orient=tk.HORIZONTAL)
         self.principal_frame.pack(fill=tk.BOTH, expand=True)
@@ -95,40 +91,30 @@ class App(ctk.CTk):
         self.right_paned = tk.PanedWindow(self.principal_frame, orient=tk.VERTICAL)
         
         # top Table
-        self.top_table = ttk.Treeview(self.right_paned, columns=("Column 1", "Column 2"), show="headings")
-        self.top_table.heading("Column 1", text="Column 1")
-        self.top_table.heading("Column 2", text="Column 2")
-        self.top_table.column("Column 1", width=100, stretch=False)
-        self.top_table.column("Column 2", width=150, stretch=False)
-        self.top_table.insert("", "end", values=("Row 1", "Value 1"))
-        self.top_table.insert("", "end", values=("Row 2", "Value 2"))
+        self.top_table = ttk.Treeview(self.right_paned, columns=("Name", "Value", "Type"), show="headings")
+        self.top_table.heading("Name", text="Name")
+        self.top_table.heading("Value", text="Value")
+        self.top_table.heading("Type", text="Type")
         self.right_paned.add(self.top_table, height=tls.read_config_file("top_table"), minsize=150)
         
         # bottom Table
-        self.bottom_table = ttk.Treeview(self.right_paned, columns=("Column A", "Column B"), show="headings")
-        self.bottom_table.heading("Column A", text="Column A")
-        self.bottom_table.heading("Column B", text="Column B")
-        self.bottom_table.column("Column A", width=120, stretch=False)
-        self.bottom_table.column("Column B", width=180, stretch=False)
-        self.bottom_table.insert("", "end", values=("Item 1", "Data A"))
-        self.bottom_table.insert("", "end", values=("Item 2", "Data B"))
+        self.bottom_table = ttk.Treeview(self.right_paned, columns=("Name", "Value", "Type"), show="headings")
+        self.bottom_table.heading("Name", text="Name")
+        self.bottom_table.heading("Value", text="Value")
+        self.bottom_table.heading("Type", text="Type")
         self.right_paned.add(self.bottom_table, minsize=150)
         
         # add right_paned to principal_frame
         self.principal_frame.add(self.right_paned, minsize=150)
-    
-        # Vincular el evento <Configure> al método on_resize
-        self.principal_frame.bind("<B1-Motion>", on_principal_resize)
-        self.right_paned.bind("<B1-Motion>", on_right_paned_resize)
         
-    def shortcuts(self):
+    def binds(self):
         # File shortcuts
         self.bind("<Control-o>", lambda event: st.open_file(self.treeview))
         self.bind("<Control-O>", lambda event: st.open_file(self.treeview))
         self.bind("<Control-s>", lambda event: print("Save file m"))
         self.bind("<Control-S>", lambda event: print("Save file M"))
         self.bind("<Control-Shift-s>", lambda event: st.save_as("sadasd.json", "asdasd"))
-        self.bind("<Control-Shift-S>", lambda event: st.save_as("sadasd.json", "asdasd"))
+        self.bind("<Control-Shift-S>", lambda event: st.save_as("sadasd.json", "asdasd"))   
         self.bind("<Control-q>", lambda event: self.destroy())
         self.bind("<Control-Q>", lambda event: self.destroy())
         
@@ -143,13 +129,20 @@ class App(ctk.CTk):
         # View shortcuts
         self.bind("<Control-plus>", lambda event: st.zoom_in())
         self.bind("<Control-minus>", lambda event: st.zoom_out())
-        self.bind("<Control-0>", lambda event: st.reset_view(app))
-        self.bind("<F11>", lambda event: st.toggle_fullscreen(app))
+        self.bind("<Control-0>", lambda event: st.reset_view(self))
+        self.bind("<F11>", lambda event: st.toggle_fullscreen(self))
         
         # Help shortcuts
         self.bind("<Control-h>", lambda event: print("Open documentation"))
         self.bind("<Control-H>", lambda event: print("Open documentation"))
         self.bind("<F1>", lambda event: print("About application"))
+        
+        # Others
+        self.principal_frame.bind("<B1-Motion>", lambda event: tls.on_principal_resize(self, event))
+        self.right_paned.bind("<B1-Motion>", lambda event: tls.on_right_paned_resize(self, event))
+        self.treeview.bind("<<TreeviewOpen>>", lambda event: self.treeview.selection_remove(self.treeview.selection()))
+        self.treeview.bind("<<TreeviewClose>>", lambda event: self.treeview.selection_remove(self.treeview.selection()))
+        self.treeview.bind("<<TreeviewSelect>>", lambda event: tls.show_content_file(self, event) if self.treeview.selection() else None)
 
 # %% Execute
 if __name__ == "__main__":
