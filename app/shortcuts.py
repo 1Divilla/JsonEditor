@@ -34,19 +34,18 @@ def open_file(treeview):
         messagebox.showerror("Error", "No file selected. Please select a valid JSON file.")
             
 def toggle_fullscreen(self):
-    is_fullscreen = self.attributes("-fullscreen")
-    self.attributes("-fullscreen", not is_fullscreen)
-    button_text = "Salir de Pantalla Completa" if not is_fullscreen else "Pantalla Completa"
-    self.toggle_button.config(text=button_text)
+    self.state('normal' if self.attributes("-fullscreen") else 'zoomed')
+    current_state = self.attributes("-fullscreen")
+    self.attributes("-fullscreen", not current_state)
     
 def reset_view(self):
-    if tls.read_config_file("principal_frame") != 170:
-        tls.write_config_file("principal_frame", 170)
-        self.principal_frame.paneconfig(self.file_explorer_frame, width=170)
+    if tls.read_config_file("principal_frame") != 250:
+        tls.write_config_file("principal_frame", 250)
+        self.principal_frame.paneconfig(self.file_explorer_frame, width=250)
 
-    if tls.read_config_file("top_table") != 400:
-        tls.write_config_file("top_table", 400)
-        self.right_paned.paneconfig(self.top_table, height=400)
+    if tls.read_config_file("top_table") != 1229:
+        tls.write_config_file("top_table", 1229)
+        self.right_paned.paneconfig(self.top_table, height=1229)
 
     if tls.read_config_file("font_size") != 12:
         tls.write_config_file("font_size", 12)

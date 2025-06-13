@@ -11,17 +11,17 @@ class App(ctk.CTk):
 
     def __init__(self):
         super().__init__()
-
+        
         self.title("JsonEditor")
-        self.minsize(1040, 600)
+        self.minsize(520, 300)
         self.geometry("1040x600")
         self.center_window(1040, 600)
         
-        self.create_widgets()
+        self.create_widgets() 
         self.create_menu()
         self.binds()
         
-        st.update_treeview(self.treeview, tls.read_config_file("path"), tls.read_config_file("data_file"))
+        tls.update_treeview(self.treeview, tls.read_config_file("path"), tls.read_config_file("data_file"))
         
     def center_window(self, w, h):
         """Center the window on the screen."""
@@ -92,16 +92,22 @@ class App(ctk.CTk):
         
         # top Table
         self.top_table = ttk.Treeview(self.right_paned, columns=("Name", "Value", "Type"), show="headings")
-        self.top_table.heading("Name", text="Name")
-        self.top_table.heading("Value", text="Value")
-        self.top_table.heading("Type", text="Type")
+        self.top_table.heading("Name", text="Name", anchor="w")
+        self.top_table.column("Name", minwidth=100, stretch=True)
+        self.top_table.heading("Value", text="Value", anchor="w")
+        self.top_table.column("Value", minwidth=100, stretch=True)
+        self.top_table.heading("Type", text="Type", anchor="w")
+        self.top_table.column("Type", minwidth=100, stretch=True)
         self.right_paned.add(self.top_table, height=tls.read_config_file("top_table"), minsize=150)
         
         # bottom Table
         self.bottom_table = ttk.Treeview(self.right_paned, columns=("Name", "Value", "Type"), show="headings")
-        self.bottom_table.heading("Name", text="Name")
-        self.bottom_table.heading("Value", text="Value")
-        self.bottom_table.heading("Type", text="Type")
+        self.bottom_table.heading("Name", text="Name", anchor="w")
+        self.bottom_table.column("Name", minwidth=100, stretch=True)
+        self.bottom_table.heading("Value", text="Value", anchor="w")
+        self.bottom_table.column("Value", minwidth=100, stretch=True)
+        self.bottom_table.heading("Type", text="Type", anchor="w")
+        self.bottom_table.column("Type", minwidth=100, stretch=True)
         self.right_paned.add(self.bottom_table, minsize=150)
         
         # add right_paned to principal_frame
@@ -143,6 +149,11 @@ class App(ctk.CTk):
         self.treeview.bind("<<TreeviewOpen>>", lambda event: self.treeview.selection_remove(self.treeview.selection()))
         self.treeview.bind("<<TreeviewClose>>", lambda event: self.treeview.selection_remove(self.treeview.selection()))
         self.treeview.bind("<<TreeviewSelect>>", lambda event: tls.show_content_file(self, event) if self.treeview.selection() else None)
+        self.top_table.bind("<Double-1>", lambda event: tls.on_double_click(self, event, self.top_table))
+        self.bottom_table.bind("<Double-1>", lambda event: tls.on_double_click(self, event, self.bottom_table))
+        self.bind("<Configure>", lambda event: tls.on_window_resize(self, event))
+        self.top_table.bind("<B1-Motion>", lambda event: tls.on_column_resize(self, self.top_table))
+        self.bottom_table.bind("<B1-Motion>", lambda event: tls.on_column_resize(self, self.bottom_table))
 
 # %% Execute
 if __name__ == "__main__":

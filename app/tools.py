@@ -17,15 +17,126 @@ def insert_items(treeview, parent, data):
             node = treeview.insert(parent, "end", text=f"[{index}]", values=(str(item) if not isinstance(item, (dict, list)) else ""))
             if isinstance(item, (dict, list)):
                 insert_items(treeview, node, item)
+
+def on_column_resize(self, table):
+    if hasattr(self, 'entry_popup') and self.entry_popup:
+        try:
+            self.entry_popup.destroy()
+            self.entry_popup = None
+        except Exception as e:
+            print(f"Error al destruir popup: {e}")
+
+    # El resto igual: verificar cambios y actualizar prev_column_widths...
+    if not hasattr(self, 'prev_column_widths'):
+        self.prev_column_widths = {col: table.column(col)["width"] for col in table["columns"]}
+        return
+
+    for col in table["columns"]:
+        try:
+            current_width = table.column(col)["width"]
+            prev_width = self.prev_column_widths.get(col)
+
+            if current_width != prev_width:
+                self.prev_column_widths[col] = current_width
+        except Exception as e:
+            print(f"Error checking column '{col}': {e}")
+
+def on_double_click(self, event, table):
+    if hasattr(self, 'entry_popup') and self.entry_popup:
+        try:
+            self.entry_popup.destroy()
+            self.entry_popup = None
+        except Exception as e:
+            print(f"Error al destruir popup: {e}")
+
+
+    row = table.identify_row(event.y)
+    column = table.identify_column(event.x)
+
+    if not row:
+        return
+
+    column_index = int(column[1:]) - 1
+    
+    if column_index == 2:
+        return
+
+    bbox = table.bbox(row, column_index)
+    
+    if not bbox:
+        return
+
+    x, y, width, height = bbox
+    pady = height // 8
+
+    value = table.item(row, 'values')[column_index]
+
+    self.entry_popup = ep.EntryPopup(self, table, row, column_index, value)
+    self.entry_popup.place(x=x, y=y, width=width, height=height, anchor='nw')
+    
+    abs_x = table.winfo_rootx() - self.winfo_rootx() + x
+    abs_y = table.winfo_rooty() - self.winfo_rooty() + y
+    self.entry_popup.place(
+        x=abs_x,
+        y=abs_y,
+        width=width,
+        height=height,
+        anchor='nw'
+    )
             
 def on_principal_resize(self, event):
+    if hasattr(self, 'entry_popup') and self.entry_popup:
+        try:
+            self.entry_popup.destroy()
+            self.entry_popup = None
+        except Exception as e:
+            print(f"Error al destruir popup: {e}")
+
+    max_column_width = int(self.winfo_width() * 0.8)
+    
+    # Limitar todas las columnas
+    for col in ["Name", "Value", "Type"]:
+        current_width = self.top_table.column(col, "width")
+        new_width = min(current_width, max_column_width)
+        self.top_table.column(col, width=new_width, minwidth=100, stretch=True)
+        
+        current_width_bottom = self.bottom_table.column(col, "width")
+        new_width_bottom = min(current_width_bottom, max_column_width)
+        self.bottom_table.column(col, width=new_width_bottom, minwidth=100, stretch=True)
+    
+    # Actualizar configuración principal
     write_config_file("principal_frame", self.principal_frame.sash_coord(0)[0])
     
 def on_right_paned_resize(self, event):
+    if hasattr(self, 'entry_popup') and self.entry_popup:
+        try:
+            self.entry_popup.destroy()
+            self.entry_popup = None
+        except Exception as e:
+            print(f"Error al destruir popup: {e}")
+
     write_config_file("top_table", self.top_table.winfo_height())
+
+def on_window_resize(self, event):
+    current_w, current_h = self.winfo_width(), self.winfo_height()
     
+    if not hasattr(self, 'prev_size'):
+        self.prev_size = {'w': current_w, 'h': current_h}
+    
+    if current_w != self.prev_size['w'] or current_h != self.prev_size['h']:
+        if hasattr(self, 'entry_popup') and self.entry_popup:
+            try:
+                self.entry_popup.destroy()
+                self.entry_popup = None
+            except Exception as e:
+                print(f"Error al destruir popup: {e}")
+        
+        # Actualizar tamaño previo
+        self.prev_size = {'w': current_w, 'h': current_h}
+
 def read_config_file(variable):
-    project_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_dir = os.path.abspath(os.path.join(current_dir, '..'))
     config_file_path = os.path.join(project_dir, 'config.json')
     
     try:
@@ -98,15 +209,20 @@ def show_content_file(self, event):
             table.heading("Value", text="Value", anchor="w")
             table.heading("Type", text="Type", anchor="w")
             table.column("#0", width=0, stretch=False)
-            table.column("Name", anchor="w")
-            table.column("Value", anchor="w")
-            table.column("Type", anchor="w")
 
-            # Función recursiva para extraer todos los elementos descendientes
+            # Almacenar longitudes máximas
+            max_lengths = {"Name": len("Name"), "Value": len("Value")}
+
+            # Función para calcular la longitud de los valores
             def process_items(key, value):
                 value_type = type(value).__name__
                 display_value = str(value)
-                return (key, display_value, value_type)
+                
+                # Actualizar la longitud máxima
+                max_lengths["Name"] = max(max_lengths["Name"], len(key))
+                max_lengths["Value"] = max(max_lengths["Value"], len(display_value))
+
+                return key, display_value, value_type
 
             def insert_all_items(parent, data, parent_key=""):
                 if isinstance(data, dict):
@@ -132,10 +248,17 @@ def show_content_file(self, event):
             # Insertar el nodo seleccionado y todos los niveles inferiores
             insert_all_items("", selected_data)
 
+            table.column("Name", width=(max_lengths["Name"] * 8), minwidth=100, stretch=True)
+            table.column("Value", width=(max_lengths["Value"] * 8), minwidth=100, stretch=True)
+            table.column("Type", width=1, minwidth=100, stretch=True)
+
+            table.update_idletasks()
+
             print("Datos insertados con éxito.")
 
     except Exception as e:
         print(f"Unexpected error: {e}")
+       
 def update_treeview(treeview, file_path, data):
     for item in treeview.get_children():
         treeview.delete(item)
@@ -145,7 +268,8 @@ def update_treeview(treeview, file_path, data):
     insert_items(treeview, "", data)
                 
 def write_config_file(variable, value):
-    project_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_dir = os.path.abspath(os.path.join(current_dir, '..'))
     config_file_path = os.path.join(project_dir, 'config.json')
     
     try:

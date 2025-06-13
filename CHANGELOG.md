@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.7] - 2025-06-13
+### Added
+- Tables automatically resize to fit text content
+- Possible to edit table cells directly
+  
+### Fixed
+- Fixed relative path issues causing errors when running the application outside of Spyder
+- Prevent infinite column resizing beyond screen boundaries
+- Function `toggle_fullscreen` now works correctly.
+
+### Improved
+- Internal value adjustments
+
+---
+
 ## [0.1.6] - 2025-01-28
 ### Added
 - Added functionality to `show_content_file` to display information in the `current_table`.
@@ -14,6 +29,8 @@
 
 ### Refactored
 - Refactored `open_file` to use `update_treeview` and `insert_items` functions from `tools.py` for better code organization and separation of concerns.
+
+---
 
 ## [0.1.5] - 2025-01-17
 ### Added

@@ -1,9 +1,126 @@
 {
     "current_table": "top",
-    "principal_frame": 170,
-    "top_table": 593,
+    "principal_frame": 172,
+    "top_table": 1229,
     "font_size": 12,
     "theme": "light",
-    "path": "",
-    "data_file": {}
+    "path": "C:/Users/DIVIL/OneDrive/documentos/ExampleJson.json",
+    "data_file": {
+        "user": {
+            "id": 12345,
+            "name": "John Doe",
+            "age": 30,
+            "is_active": true,
+            "address": {
+                "street": "123 Main St",
+                "city": "Springfield",
+                "state": "IL",
+                "zipcode": "62701",
+                "location": {
+                    "latitude": 39.7817,
+                    "longitude": -89.6501,
+                    "landmark": {
+                        "name": "Springfield Park",
+                        "type": "Public",
+                        "distance_to_user": "1.5 km",
+                        "details": {
+                            "history": "Park built in 1920",
+                            "events": [
+                                {
+                                    "name": "Annual Fair",
+                                    "date": "2025-06-15"
+                                },
+                                {
+                                    "name": "Music Concert",
+                                    "date": "2025-08-22"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "contact": {
+                "email": "johndoe@example.com",
+                "phone": {
+                    "mobile": "+1234567890",
+                    "home": "+0987654321"
+                },
+                "social_media": {
+                    "facebook": "john.doe.fb",
+                    "twitter": "@john_doe"
+                }
+            },
+            "preferences": {
+                "theme": "dark",
+                "notifications": {
+                    "email": true,
+                    "sms": false,
+                    "push": {
+                        "enabled": true,
+                        "frequency": "daily",
+                        "details": {
+                            "last_update": "2025-01-14",
+                            "preferences_updated": true
+                        }
+                    }
+                },
+                "languages": [
+                    "English",
+                    "Spanish",
+                    "German"
+                ]
+            },
+            "subscriptions": [
+                {
+                    "service": "Netflix",
+                    "status": "active",
+                    "start_date": "2020-01-15",
+                    "billing": {
+                        "amount": 12.99,
+                        "currency": "USD",
+                        "next_billing_date": "2025-01-15"
+                    },
+                    "content": {
+                        "favorite_shows": [
+                            {
+                                "name": "Breaking Bad",
+                                "genre": "Drama"
+                            },
+                            {
+                                "name": "Stranger Things",
+                                "genre": "Sci-Fi"
+                            }
+                        ]
+                    },
+                    "additional_info": {
+                        "device_limit": 3,
+                        "HD_available": true
+                    }
+                },
+                {
+                    "service": "Spotify",
+                    "status": "inactive",
+                    "start_date": "2019-03-20",
+                    "billing": {
+                        "amount": 9.99,
+                        "currency": "USD",
+                        "next_billing_date": "2025-03-20"
+                    }
+                }
+            ]
+        },
+        "system": {
+            "platform": "Windows",
+            "version": "10.0.19042",
+            "last_login": "2025-01-14T12:45:00Z",
+            "updates": {
+                "last_check": "2025-01-10",
+                "auto_update": true,
+                "details": {
+                    "last_update_version": "10.0.19042",
+                    "next_scheduled_check": "2025-02-01"
+                }
+            }
+        }
+    }
 }
