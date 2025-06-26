@@ -6,6 +6,32 @@ import os
 import tools as tls
 
 # %% Code
+def close(self):
+    # Read original file path and current data
+    path, current_data = tls.read_config_file("path"), tls.read_config_file("data_file")
+
+    if path and current_data:
+        try:
+            # Read original file content
+            with open(path, 'r', encoding='utf-8') as file:
+                original_data = json.load(file)
+
+            # Compare original data with current data
+            if original_data != current_data:
+                confirm = messagebox.askyesno(
+                    "Cambios no guardados",
+                    "Hay cambios que no se han guardado.\n¿Deseas salir sin guardar?"
+                )
+                if not confirm:
+                    return
+
+        except Exception as e:
+            messagebox.showerror("Error al cerrar", f"No se pudo leer el archivo original:\n{e}")
+            return
+        
+    tls.write_config_file("path", ""), tls.write_config_file("data_file", ""), tls.write_config_file("current_table", "top")
+    self.destroy()
+
 def open_file(treeview):
     file_path = filedialog.askopenfilename(
         title="Select File",
@@ -21,7 +47,7 @@ def open_file(treeview):
                 tls.write_config_file("path", file_path)
                 tls.write_config_file("data_file", data_json)
 
-                # Actualizar el encabezado y limpiar el treeview
+                # Update the header and clear the treeview
                 tls.update_treeview(treeview, file_path, data_json)
 
         except FileNotFoundError:
@@ -39,20 +65,36 @@ def toggle_fullscreen(self):
     self.attributes("-fullscreen", not current_state)
     
 def reset_view(self):
-    if tls.read_config_file("principal_frame") != 250:
-        tls.write_config_file("principal_frame", 250)
-        self.principal_frame.paneconfig(self.file_explorer_frame, width=250)
+    if tls.read_config_file("principal_frame") != 200:
+        tls.write_config_file("principal_frame", 200)
+        self.principal_frame.paneconfig(self.file_explorer_frame, width=200)
 
-    if tls.read_config_file("top_table") != 1229:
-        tls.write_config_file("top_table", 1229)
-        self.right_paned.paneconfig(self.top_table, height=1229)
+    if tls.read_config_file("top_table") != 1240:
+        tls.write_config_file("top_table", 1240)
+        self.right_paned.paneconfig(self.top_table_frame, height=1240)
 
     if tls.read_config_file("font_size") != 12:
         tls.write_config_file("font_size", 12)
 
     self.update_idletasks()
 
-def save_as(name, content):
+def save():
+    try:
+        file_path = tls.read_config_file("path")
+        content = tls.read_config_file("data_file")
+
+        if file_path:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                json_string = json.dumps(content, indent=4, ensure_ascii=False)
+                file.write(json_string)
+                print(f"Save Succesfully Done")
+        else:
+            messagebox.showwarning("Save Warning", "No file path found. Use 'Save As' instead.")
+    except Exception as e:
+        messagebox.showerror("Save JSON Error", f"An error occurred while saving:\n{e}")
+
+def save_as():
+    name, content = os.path.basename(tls.read_config_file("path")), tls.read_config_file("data_file")
     try:
         type_file = f".{name.split('.')[-1]}" if '.' in name else ".json"
         
@@ -68,7 +110,9 @@ def save_as(name, content):
         
         if file_path:
             with open(file_path, 'w', encoding='utf-8') as file:
-                file.write(content)
+                json_string = json.dumps(content, indent=4, ensure_ascii=False)
+                file.write(json_string)
+                print(f"Save As Succesfully Done")
 
     except Exception as e:
         messagebox.showerror("Save As JSON Error", f"An error occurred while saving:\n{e}")

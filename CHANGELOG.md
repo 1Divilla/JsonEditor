@@ -1,13 +1,31 @@
 # Changelog
 
+## [0.1.8] - 2025-06-26
+## Added
+- Added function `delete_entrypopup` to `tools.py`.
+- Implemented the `close` method to detect unsaved changes before closing the application.
+- Added new comments and revised existing ones for better clarity.
+- Added scrollbars to `bottom_table`, `top_table` and `file_explorer_frame`.
+- Removed `data_file` and `path` entries from `config.json` on application close.
+- Entry popup now closes automatically when interacting with other UI elements.
+
+## Removed
+- Removed `Entry` widget from file explorer Treeview.
+
+### Improved
+- Internal value adjustments
+- Fixed punctuation issues and formatting 
+
+---
+
 ## [0.1.7] - 2025-06-13
 ### Added
-- Tables automatically resize to fit text content
-- Possible to edit table cells directly
+- Tables automatically resize to fit text content.
+- Possible to edit table cells directly.
   
 ### Fixed
-- Fixed relative path issues causing errors when running the application outside of Spyder
-- Prevent infinite column resizing beyond screen boundaries
+- Fixed relative path issues causing errors when running the application outside of Spyder.
+- Prevent infinite column resizing beyond screen boundaries.
 - Function `toggle_fullscreen` now works correctly.
 
 ### Improved
@@ -58,9 +76,9 @@
 
 ## [0.1.2] - 2025-01-14
 ### Added
-- Added functions to write and read config file
-- Added function to toggle fullscreen
-- Added function `Zoom in`, `Zoom out`, `Reset Zoom`
+- Added functions to write and read config file.
+- Added function to toggle fullscreen.
+- Added function `Zoom in`, `Zoom out`, `Reset Zoom`.
 
 ---
 
